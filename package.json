@@ -1,0 +1,26 @@
+{
+  "name": "svml-word-captions",
+  "version": "1.0.0",
+  "description": "Hypit-style SVML word-anchored caption engine with millisecond-accurate neural alignment and Remotion animation",
+  "main": "src/HypitCaption.tsx",
+  "scripts": {
+    "align": "python scripts/align_audio.py",
+    "serve": "python -m http.server 8080 -d demo"
+  },
+  "keywords": [
+    "remotion",
+    "captions",
+    "hypit",
+    "svml",
+    "subtitles",
+    "whisper",
+    "karaoke",
+    "word-alignment"
+  ],
+  "author": "dokibbu",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.3.1",
+    "remotion": "^4.0.0"
+  }
+}

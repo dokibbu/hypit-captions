@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hypit 风格 SVML 单词锚定字幕实战演示（带配音）</title>
+  <style>
+    :root {
+      --bg: #09090b;
+      --panel: #141418;
+      --card: #1f1f26;
+      --cyan: #00d2ff;
+      --yellow: #ffd23f;
+      --pink: #f472b6;
+      --border: #2e2e38;
+      --text: #f1f5f9;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      max-width: 900px;
+    }
+    h1 {
+      font-size: 26px;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .badge-cyan {
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 6px;
+      background: rgba(0, 210, 255, 0.15);
+      color: var(--cyan);
+      border: 1px solid var(--cyan);
+    }
+    p.desc {
+      color: var(--text-dim);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 28px;
+      max-width: 1100px;
+      width: 100%;
+      background: var(--panel);
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    }
+
+    /* Left SVML Code Panel */
+    .code-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .code-header {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .code-box {
+      background: #0d0d11;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+    .tag { color: var(--pink); font-weight: bold; }
+    .prop { color: #38bdf8; }
+    .badge-tag { background: rgba(0, 210, 255, 0.2); color: var(--cyan); padding: 1px 6px; border-radius: 4px; font-weight: bold; }
+    .phonetic { color: #fbbf24; }
+
+    .tech-card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .tech-card h3 {
+      font-size: 14px;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    /* Right Video Player */
+    .video-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .video-wrapper {
+      position: relative;
+      width: 360px;
+      height: 640px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #000;
+    }
+
+    .controls-bar {
+      margin-top: 14px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    button {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    button:hover {
+      background: var(--cyan);
+      color: #000;
+      border-color: var(--cyan);
+    }
+    button.primary {
+      background: var(--cyan);
+      color: #000;
+      border-color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .scrub-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    input[type=range] {
+      flex: 1;
+      accent-color: var(--cyan);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>
+      <span>Hypit 单词锚定字幕技术验证</span>
+      <span class="badge-cyan">带配音 + 黑色背景 + 弹跳高亮</span>
+    </h1>
+    <p class="desc">
+      提取 Hypit 核心机制：自研 SVML 标记语言解析 + 词级语音时间对齐（WhisperX 规范） + 无头 React/CSS 实时动效。<br>
+      涵盖原版特色：<code>@ronaldo</code> 青色徽章、<code>&lt;D | Dee&gt;</code> 发音与显示分离、当前词亮黄色弹跳、黑边外描边（防吃字）。
+    </p>
+  </header>
+
+  <div class="main-grid">
+    <!-- Left SVML Code & Pipeline Analysis -->
+    <div class="code-panel">
+      <div class="code-header">
+        <span>📄 SVML 标记语言源文件（Source Video Markup Language）</span>
+      </div>
+      <div class="code-box">
+<span class="tag">&lt;script&gt;</span>
+  <span class="tag">&lt;segment</span> <span class="prop">id</span>=<span class="string">"ronaldo"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;HOST&gt;</span>
+      <span class="badge-tag">@ronaldo</span> Ronaldo is <span class="phonetic">&lt;D | Dee&gt;</span> tier.
+      Bro has <span class="badge-tag">@hair-gel</span> more hair gel
+      than <span class="badge-tag">@trophy</span> trophies at this point.
+      Built like <span class="badge-tag">@greek-god</span> a Greek god,
+      plays like <span class="badge-tag">@greek-tragedy</span> a Greek tragedy.
+      But hey, at least <span class="badge-tag">@penaldo-social</span>
+      he's got the most followers on Instagram.
+    <span class="tag">&lt;/HOST&gt;</span>
+  <span class="tag">&lt;/segment&gt;</span>
+<span class="tag">&lt;/script&gt;</span>
+      </div>
+
+      <div class="tech-card">
+        <h3>🔍 三大关键技术点落实对照</h3>
+        <ul style="padding-left: 18px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px;">
+          <li><b>发音与字幕分离 <code>&lt;D | Dee&gt;</code></b>：TTS 语音合成器念 "Dee"，画面渲染展示单字母 "D"，完美解决缩写发音歧义。</li>
+          <li><b>实体高亮徽章 <code>@ronaldo</code></b>：带有 <code>@</code> 的词自动渲染为亮青色圆角药丸框（Badge Pill），并触发动效。</li>
+          <li><b>毫秒级卡拉OK变色</b>：当前正在念的单词呈亮黄色 <code>#ffd23f</code> 并产生 <code>spring()</code> 放大弹跳，未念或已念词为白底黑描边。</li>
+        </ul>
+      </div>
+
+      <div class="tech-card">
+        <h3>🛠️ 生成与合成管道</h3>
+        <p style="color: var(--text-dim); margin-top: 4px;">
+          配音使用 Windows 原生 SAPI 语音引擎逐词抓取毫秒级对齐数据（对标 WhisperX），由 Remotion 逐帧渲染并经 FFmpeg 压制立体声，整片全长 17.65 秒。
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Video Player -->
+    <div class="video-column">
+      <div class="video-wrapper">
+        <video id="v" src="./hypit_subtitle_demo.mp4" playsinline autoplay loop></video>
+      </div>
+
+      <div class="controls-bar">
+        <div class="btn-row">
+          <button id="btnPlay" class="primary">暂停</button>
+          <button id="btnRestart">重播</button>
+          <button id="btnSpeed05">0.5x 慢放</button>
+          <button id="btnSpeed10">1.0x 原速</button>
+        </div>
+        <div class="scrub-row">
+          <span id="timeTxt">0.00s / 14.30s</span>
+          <input type="range" id="seek" min="0" max="429" step="1" value="0">
+          <span id="frameTxt">F000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const v = document.getElementById('v');
+    const btnPlay = document.getElementById('btnPlay');
+    const btnRestart = document.getElementById('btnRestart');
+    const btnSpeed05 = document.getElementById('btnSpeed05');
+    const btnSpeed10 = document.getElementById('btnSpeed10');
+    const seek = document.getElementById('seek');
+    const timeTxt = document.getElementById('timeTxt');
+    const frameTxt = document.getElementById('frameTxt');
+
+    btnPlay.addEventListener('click', () => {
+      if (v.paused) {
+        v.play();
+        btnPlay.innerText = '暂停';
+      } else {
+        v.pause();
+        btnPlay.innerText = '播放';
+      }
+    });
+
+    btnRestart.addEventListener('click', () => {
+      v.currentTime = 0;
+      v.play();
+      btnPlay.innerText = '暂停';
+    });
+
+    btnSpeed05.addEventListener('click', () => { v.playbackRate = 0.5; });
+    btnSpeed10.addEventListener('click', () => { v.playbackRate = 1.0; });
+
+    v.addEventListener('timeupdate', () => {
+      const cur = v.currentTime;
+      const total = v.duration || 14.30;
+      const f = Math.min(429, Math.floor(cur * 30));
+      timeTxt.innerText = `${cur.toFixed(2)}s / ${total.toFixed(2)}s`;
+      frameTxt.innerText = `F${String(f).padStart(3, '0')}`;
+      seek.value = f;
+    });
+
+    seek.addEventListener('input', () => {
+      const f = parseInt(seek.value, 10);
+      v.currentTime = f / 30;
+    });
+  </script>
+</body>
+</html>
